@@ -1,18 +1,14 @@
 using Carter;
-using Microsoft.AspNetCore.Http;
 using ProductApi.Models;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 public class ProductModule : ICarterModule
 {
-    private static List<Product> _products = new List<Product>
-    {
-        new Product { Id = Guid.NewGuid(), Name = "Printer", Price = 10000 },
-        new Product { Id = Guid.NewGuid(), Name = "Notebook", Price = 5000 },
-        new Product { Id = Guid.NewGuid(), Name = "Kitap", Price = 200 }
-    };
+    private static readonly List<Product> _products = [
+        new() { Id = Guid.NewGuid(), Name = "Printer", Price = 10000 },
+        new() { Id = Guid.NewGuid(), Name = "Notebook", Price = 5000 },
+        new() { Id = Guid.NewGuid(), Name = "Kitap", Price = 200 }
+    ];
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {
@@ -20,19 +16,19 @@ public class ProductModule : ICarterModule
 
         app.MapGet("/api/products/{id}", (Guid id) =>
         {
-            var product = _products.FirstOrDefault(p => p.Id == id);
+            var product = _products.Find(p => p.Id == id);
             return product is not null ? Results.Ok(product) : Results.NotFound();
         });
 
-        app.MapPost("/api/products", (Product product, HttpContext ctx) =>
+        app.MapPost("/api/products", (Product product) =>
         {
             var validationResults = new List<ValidationResult>();
             var context = new ValidationContext(product);
-            if (!System.ComponentModel.DataAnnotations.Validator.TryValidateObject(product, context, validationResults, true))
+            if (!Validator.TryValidateObject(product, context, validationResults, true))
             {
                 return Results.ValidationProblem(validationResults.ToDictionary(
                     v => v.MemberNames.FirstOrDefault() ?? "",
-                    v => new string[] { v.ErrorMessage ?? "Invalid" }
+                    v => new[] { v.ErrorMessage ?? "Invalid" }
                 ));
             }
             product.Id = Guid.NewGuid();

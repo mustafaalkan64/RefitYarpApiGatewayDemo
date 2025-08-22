@@ -11,7 +11,7 @@ namespace ConsumerApi.Services
         Task<List<Product>> GetProducts();
 
         [Get("/api/products/{id}")]
-        Task<Product> GetProduct(int id);
+        Task<Product> GetProduct(Guid id);
 
         [Post("/api/products")]
         Task<Product> PostProduct([Body] Product product);
