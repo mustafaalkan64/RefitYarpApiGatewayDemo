@@ -4,19 +4,35 @@
 ## 📌 Genel Bakış
 
 Bu demo projesi, **.NET 9** ile bir API Gateway'in nasıl oluşturulacağını ve  
-`YARP (Yet Another Reverse Proxy)` kullanarak gelen isteklerin tek bir noktadan tüm microservislere  
-nasıl yönlendirileceğini göstermektedir.  
-
+`YARP (Yet Another Reverse Proxy)` kullanarak gelen isteklerin tek bir noktadan tüm microservislere  nasıl yönlendirileceğini göstermektedir.  
 Ayrıca `Refit` kütüphanesi kullanılarak typed HTTP client’lar ile güçlü ve sade bir API tüketim yaklaşımı sunulmaktadır.
+
+---
+
+## 📌 Yarp Api Gateway Avantajları Nelerdir
+
+-  YARP (Yet Another Reverse Proxy), Microsoft tarafından geliştirilen yüksek performanslı bir reverse proxy ve API Gateway çözümüdür. ASP.NET Core üzerinde çalışır.
+-  Clienttean gelen bir isteği, microservis mimarisi ile geliştirdiğimiz servislere tek bir entry point üzerinden dağıtan ve route eden bir mekanızmadır.
+-  Ayrıca; Routing, Load Balancing, Authentication, Rate Limiting, Caching gibi ortak ihtiyaçları merkezi bir katmanda yönetmek için de güzel bir çözümdür.
+-  Appsetting.json üzerinden kolayca routingler ve clusterlar konfigure edilebilir, kullanımı oldukça basittir.
+
+---
+
+## 📌 Refit Avantajları Nelerdir
+
+-  API endpointlerini çağırmak için HttpClient kodu yazmaya gerek kalmadan kolayca interface olarak tanımlayabilirsin, bu da size daha temiz, test edilebilir ve boilerplate kodlardan arındırılmış bir kod sağlar.
+-  Her defasında Json Serialize/Deserialize yapmaya gerek kalmaz, çünkü Refit bunu otomatik yapar.
+-  Test edilebilir olduğu için, unit testlerde kolayca mocklayabilirsiniz
+-  Strongly-Type Api olduğu için runtimeda patlamadan compiletimeda hatayi yakalar.
 
 ---
 
 ## ✨ Öne Çıkan Özellikler
 
-- **YARP ile API Gateway**: Gelen istekleri `ConsumerApi` veya `ProductApi` gibi farklı microservislere yönlendirir.  
-- **Refit ile Typed HTTP Client**: HTTP API çağrıları için arayüz tabanlı, bakımı kolay bir yapı.  
+- **YARP ile API Gateway**: Gelen istekleri, tek bir entry point üzerinden `ConsumerApi` veya `ProductApi` gibi farklı microservislere yönlendiren reverse proxy.  
+- **Refit ile Typed HTTP Client**: HTTP API çağrıları için arayüz tabanlı, bakımı kolay bir yapı.
+- **ICarter ile Minimal Api Tasarımı**: Carter kütüphanesi ile yüksek trafikli uygulamarda daha hızlı çalışabilen, daha esnek, daha prototip ve fonksiyonel endpointler sunar.
 - **.NET 9 ile Modern Geliştirme**: En yeni .NET sürümüyle uyumluluk.  
-- **Minimal Kod, Maksimum Anlaşılabilirlik**: Öğrenmesi ve genişletmesi kolay bir demo.
 
 ---
 
@@ -24,7 +40,7 @@ Ayrıca `Refit` kütüphanesi kullanılarak typed HTTP client’lar ile güçlü
 
 /ApiGateway – YARP tabanlı API Gateway uygulaması
 /ProductApi – Products servisi (örnek backend API)
-/ConsumerApi – Products Api'ye Refit HttpClient kütüphanesi üzerinden erişen client servis (consumer API)
+/ConsumerApi – ProductsApi'ye Refit HttpClient kütüphanesi üzerinden erişen client servis (consumer API)
 
 - ApiGateway -> localhost:5000
 - ProductApi -> localhost:5001
@@ -105,6 +121,34 @@ public interface IProductApi
 
     [Post("/api/products")]
     Task<Product> PostProduct([Body] Product product);
+}
+```
+ICarterModule implemente eden, Proxy gibi çalışıp dış Api (ProductApi) ile haberleşen classımız.
+
+```csharp
+using Carter;
+using ConsumerApi.Models;
+using ConsumerApi.Services;
+
+public class ProductProxyModule : ICarterModule
+{
+    public void AddRoutes(IEndpointRouteBuilder app)
+    {
+        app.MapGet("/api/productproxy", async (IProductApi api) =>
+            Results.Ok(await api.GetProducts()));
+
+        app.MapGet("/api/productproxy/{id}", async (Guid id, IProductApi api) =>
+        {
+            var product = await api.GetProduct(id);
+            return product is not null ? Results.Ok(product) : Results.NotFound();
+        });
+
+        app.MapPost("/api/productproxy", async (Product product, IProductApi api) =>
+        {
+            var created = await api.PostProduct(product);
+            return Results.Created($"/api/productproxy/{created.Id}", created);
+        });
+    }
 }
 ```
 
