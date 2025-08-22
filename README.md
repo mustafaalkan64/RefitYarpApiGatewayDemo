@@ -1,4 +1,4 @@
-# YARP API Gateway + Refit Örneği — .NET 9 Demo
+# Dotnet 9 ile YARP API Gateway + Refit Örneği
 
 
 ## 📌 Genel Bakış
