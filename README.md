@@ -32,7 +32,7 @@ Ayrıca `Refit` kütüphanesi kullanılarak typed HTTP clientlar ile güçlü ve
 
 - **YARP ile API Gateway**: Gelen istekleri, tek bir entry point üzerinden `ConsumerApi` veya `ProductApi` gibi farklı microservislere yönlendiren reverse proxy.  
 - **Refit ile Typed HTTP Client**: HTTP API çağrıları için arayüz tabanlı, bakımı kolay bir yapı.
-- **ICarter ile Minimal Api Tasarımı**: Carter kütüphanesi ile yüksek trafikli uygulamarda daha hızlı çalışabilen, daha esnek, daha prototip ve fonksiyonel endpointler sunar.
+- **ICarter ile Minimal Api Tasarımı**: Carter kütüphanesi ile yüksek trafikli uygulamarda daha hızlı çalışabilen, daha esnek, moduler, prototip ve fonksiyonel endpointler sunar. Daha minimal ve lighweighttir. Bakımı kolaydır. Refit ile kolayca minimal apiler geliştirebilirsiniz. Dotnet Core DI ile kolayca entegre edebilirsiniz ve geleneksel controllerlara göre daha hızlı response almanızı sağlar.
 - **.NET 9 ile Modern Geliştirme**: En yeni .NET sürümüyle uyumluluk.  
 
 ---
