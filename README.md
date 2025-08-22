@@ -5,7 +5,7 @@
 
 Bu demo projesi, **.NET 9** ile bir API Gateway'in nasıl oluşturulacağını ve  
 `YARP (Yet Another Reverse Proxy)` kullanarak gelen isteklerin tek bir noktadan tüm microservislere  nasıl yönlendirileceğini göstermektedir.  
-Ayrıca `Refit` kütüphanesi kullanılarak typed HTTP client’lar ile güçlü ve sade bir API tüketim yaklaşımı sunulmaktadır.
+Ayrıca `Refit` kütüphanesi kullanılarak typed HTTP clientlar ile güçlü ve sade bir API endpoint yaklaşımı sunulmaktadır.
 
 ---
 
@@ -15,6 +15,7 @@ Ayrıca `Refit` kütüphanesi kullanılarak typed HTTP client’lar ile güçlü
 -  Clienttean gelen bir isteği, microservis mimarisi ile geliştirdiğimiz servislere tek bir entry point üzerinden dağıtan ve route eden bir mekanızmadır.
 -  Ayrıca; Routing, Load Balancing, Authentication, Rate Limiting, Caching gibi ortak ihtiyaçları merkezi bir katmanda yönetmek için de güzel bir çözümdür.
 -  Appsetting.json üzerinden kolayca routingler ve clusterlar konfigure edilebilir, kullanımı oldukça basittir.
+-  https://learn.microsoft.com/en-us/aspnet/core/fundamentals/servers/yarp/getting-started?view=aspnetcore-9.0
 
 ---
 
